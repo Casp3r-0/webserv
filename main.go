@@ -50,7 +50,7 @@ func main() {
 	//	mux.Handle("/app/", http.StripPrefix("/app/", http.FileServer(http.Dir("."))))
 	mux.HandleFunc("GET /api/healthz/", handler)
 	mux.HandleFunc("GET /api/metrics/", apiCfg.countHandler)
-	mux.HandleFunc("/reset/", apiCfg.resetHandler)
+	mux.HandleFunc("/api/reset/", apiCfg.resetHandler)
 
 	log.Printf("Serving on port: %s\n", port)
 	srv.ListenAndServe()
