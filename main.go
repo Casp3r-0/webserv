@@ -15,6 +15,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 func (cfg *apiConfig) countHandler(w http.ResponseWriter, r *http.Request) {
 
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
 	hits := fmt.Sprintf("Hits: %d", cfg.fileserverHits)
 	w.Write([]byte(hits))
 
@@ -25,8 +27,10 @@ type apiConfig struct {
 }
 
 func (cfg *apiConfig) middlewareMetricsInc(next http.Handler) http.Handler {
-	cfg.fileserverHits++
-	return next
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		cfg.fileserverHits++
+		next.ServeHTTP(w, r)
+	})
 }
 
 func (cfg *apiConfig) resetHandler(w http.ResponseWriter, r *http.Request) {
@@ -42,7 +46,7 @@ func main() {
 		Addr:    ":" + port,
 		Handler: mux,
 	}
-	mux.Handle("/app/", apiCfg.middlewareMetricsInc(http.FileServer(http.Dir("."))))
+	mux.Handle("/app/", apiCfg.middlewareMetricsInc(http.StripPrefix("/app", http.FileServer(http.Dir(".")))))
 	//	mux.Handle("/app/", http.StripPrefix("/app/", http.FileServer(http.Dir("."))))
 	mux.HandleFunc("/healthz/", handler)
 	mux.HandleFunc("/metrics/", apiCfg.countHandler)
