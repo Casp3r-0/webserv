@@ -3,18 +3,20 @@ package main
 import (
 	"log"
 	"net/http"
+
+	"github.com/Casp3r-0/webserve/internal/database"
 )
 
 type apiConfig struct {
 	fileserverHits int
-	DB             *DB
+	DB             *database.DB
 }
 
 func main() {
 	const filepathRoot = "."
 	const port = "8080"
 
-	db, err := NewDB("database.json")
+	db, err := database.NewDB("database.json")
 	if err != nil {
 		log.Fatal(err)
 	}
