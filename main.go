@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Casp3r-0/webserve/internal/database"
+	"github.com/Casp3r-0/webserv/internal/database"
 )
 
 type apiConfig struct {
