@@ -6,16 +6,20 @@ import (
 	"net/http"
 
 	"github.com/Casp3r-0/webserv/internal/database"
+	"github.com/joho/godotenv"
 )
 
 type apiConfig struct {
 	fileserverHits int
 	DB             *database.DB
+	jwtSecret      string
 }
 
 func main() {
 	const filepathRoot = "."
 	const port = "8080"
+
+	godotenv.Load(".env")
 
 	db, err := database.NewDB("database.json")
 	if err != nil {
