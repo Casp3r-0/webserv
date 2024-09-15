@@ -50,8 +50,8 @@ func (db *DB) UserForRefreshToken(token string) (User, error) {
 	}
 
 	refreshToken, ok := dbStructure.RefreshTokens[token]
-	if !ok {
-		return User{}, err
+	if ok == false {
+		return User{}, ErrNotExist
 	}
 
 	if refreshToken.ExpiresAt.Before(time.Now()) {
