@@ -9,16 +9,26 @@ import (
 )
 
 func (cfg *apiConfig) handlerWebhook(w http.ResponseWriter, r *http.Request) {
-	type parameteres struct {
+	type parameters struct {
 		Event string `json:"event"`
 		Data  struct {
 			UserID int `json:"user_id"`
 		}
 	}
 
+	apiKey, err := GetAPIKey(r.Header)
+	if err != nil {
+		respondWithError(w, http.StatusUnauthorized, "Couldn't find API key")
+		return
+	}
+	if apiKey != cfg.polkaAPIKey {
+		respondWithError(w, http.StatusUnauthorized, "API Key is wrong")
+		return
+	}
+
 	decoder := json.NewDecoder(r.Body)
-	params := parameteres{}
-	err := decoder.Decode(&params)
+	params := parameters{}
+	err = decoder.Decode(&params)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")
 		return
